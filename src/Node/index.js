@@ -1,5 +1,8 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
+
+import { useTree } from "../Tree";
+
 import Styles from "./style.module.css";
 
 const Node = (props) => {
@@ -9,12 +12,7 @@ const Node = (props) => {
   const [selfId, _UNSAFE_setSelfId] = useState(nanoid());
   const [hasMounted, setMounted] = useState(false);
 
-  // const Tree = useContext();
-  const Tree = {
-    pushNode: () => {},
-    clearNodeEdge: (a, b) => {},
-    drawLineBetweenNodes: (a, b) => {},
-  };
+  const Tree = useTree();
 
   // @doc "Waits component screen loading"
   useLayoutEffect(() => {
@@ -24,9 +22,9 @@ const Node = (props) => {
     }
 
     Tree.pushNode({ self, selfId, fatherId });
-    Tree.clearNodeEdge({ selfId, fatherId });
-    Tree.drawLineBetweenNodes({ selfId, fatherId });
     setMounted(true);
+
+    // return () => Tree.killNode(selfId);
   }, [hasMounted, Tree, selfId, fatherId]);
 
   return (

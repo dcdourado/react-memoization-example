@@ -98,7 +98,7 @@ const calculateEdgePosition = (fatherRef, childRef) => {
   };
 };
 
-const findNodeById = (nodes, id) => nodes.find((n) => n.id === id);
+const findNodeById = (nodes, id) => nodes?.find((n) => n.id === id);
 
 const loadChildren = (nodes, childrenIds) =>
   childrenIds.map((id) => findNodeById(nodes, id));
@@ -109,6 +109,7 @@ const Actions = {
   generateNode,
   appendChild,
   refreshDownEdges,
+  excludeNodeById,
 };
 
 export default Actions;

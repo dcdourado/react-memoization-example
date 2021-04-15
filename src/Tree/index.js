@@ -3,16 +3,16 @@ import React, { useContext, useEffect, useState } from "react";
 import Logger from "../Logger";
 import Actions from "./actions";
 
-const Context = React.createContext();
+export const TreeContext = React.createContext();
 
-export const TreeContext = (props) => {
+export const TreeProvider = (props) => {
   const { children } = props;
 
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
 
-  Logger.info(`Node count: ${nodes.length}`);
-  Logger.info(`Edge count: ${edges.length}`);
+  Logger.info(`Node count: ${nodes?.length}`);
+  Logger.info(`Edge count: ${edges?.length}`);
 
   useEffect(() => {
     Logger.info("Tree initialized");
@@ -35,12 +35,23 @@ export const TreeContext = (props) => {
     return;
   };
 
+  const killNode = (nodeId) => {
+    Logger.info(`Killed node ${nodeId}`)
+
+    const childlessNodes = Actions.excludeNodeById(nodes, nodeId)
+    // TO-DO: kill all children recursevly
+    setNodes(childlessNodes)
+
+    // TO-DO: removeDownEdges(edge)
+  }
+
   const value = {
     nodes,
     pushNode,
+    killNode,
   };
 
-  return <Context.Provider value={value}>{children}</Context.Provider>;
+  return <TreeContext.Provider value={value}>{children}</TreeContext.Provider>;
 };
 
 export const useTree = () => useContext(TreeContext);

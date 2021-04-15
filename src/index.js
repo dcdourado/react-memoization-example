@@ -2,16 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import App from "./App";
-import { TreeContext } from "./Tree";
+import { TreeProvider } from "./Tree";
 import reportWebVitals from "./reportWebVitals";
 
 import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>
-    <TreeContext>
+    <TreeProvider>
       <App />
-    </TreeContext>
+    </TreeProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
