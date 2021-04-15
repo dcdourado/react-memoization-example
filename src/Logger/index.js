@@ -1,6 +1,10 @@
 const Logger = {
-  log: (message) => {
-    console.log(`[${time}] ${message}`);
+  info: (message) => {
+    console.info(`[${time}] ${message}`);
+  },
+
+  debug: (message) => {
+    console.debug(`[${time}] ${message}`);
   },
 
   warn: (message) => {

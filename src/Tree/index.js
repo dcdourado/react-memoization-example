@@ -1,6 +1,8 @@
 import { nanoid } from "nanoid";
 import React, { useState } from "react";
 
+import Logger from "../Logger";
+
 const structure = {};
 
 const Context = React.createContext();
@@ -38,7 +40,7 @@ const appendChild = (nodes, fatherId, childId) => {
   const father = findNodeById(fatherId);
 
   if (!father) {
-    console.warn(`[Tree|appendChild] Could not find father by id ${fatherId}`);
+    Logger.warn(`[Tree|appendChild] Could not find father by id ${fatherId}`);
     return;
   }
 
@@ -56,7 +58,7 @@ const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
   // No where to go...
   const noWhereToGo = nodeId === undefined && siblings === [];
   if (noWhereToGo) {
-    console.debug("[" + new Date().toLocaleTimeString() + "] puff...");
+    Logger.debug("Puff...");
 
     // With Array.flat() this will go away...
     return [];
@@ -80,29 +82,29 @@ const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
 
   const hasSiblings = siblings.length > 0;
   if (!hasSiblings) {
-    console.warn("")
+    Logger.warn("");
   }
-    return [
-      ...result,
-      Array.siblings
-        .map((sibling) => refreshDownEdges(nodes, [], sibling))
-        .flat(),
-    ];
-  }
+
+  return [
+    ...result,
+    Array.siblings
+      .map((sibling) => refreshDownEdges(nodes, [], sibling))
+      .flat(),
+  ];
 
   // const startingNodeId = siblings === [];
 
   // const startingNode = findNodeById(nodes, startingNodeId);
 
   // if (!startingNode) {
-  //   console.warn(
+  //   Logger.warn(
   //     `[Tree|refreshDownEdges] Could not find starting node by id ${startingNodeId}`
   //   );
   //   return;
   // }
 
   // if (startingNode.children === []) {
-  //   console.info(`Ended leaf id ${startingNodeId}`);
+  //   Logger.info(`Ended leaf id ${startingNodeId}`);
   //   return false;
   // }
 
