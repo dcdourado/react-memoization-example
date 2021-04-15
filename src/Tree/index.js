@@ -15,11 +15,15 @@ const Tree = (props) => {
 
   const pushNode = ({ self, selfId, fatherId }) => {
     const node = generateNode(self, selfId);
-    const nodesNewState = appendChild([...nodes, node], fatherId, node.id);
+    const plusChildNodes = appendChild(nodes, node, fatherId);
+    setNodes(plusChildNodes);
 
-    setNodes(nodesNewState);
+    const refreshedEdges = refreshDownEdges(plusChildNodes, [], fatherId);
+    setEdges(refreshedEdges);
 
-    refreshDownEdges(nodes, [], fatherId);
+    Logger.info(`Node ${selfId} pushed successfully`);
+
+    return;
   };
 
   const value = {
@@ -27,7 +31,7 @@ const Tree = (props) => {
     pushNode,
   };
 
-  return <Context.Provider>{children}</Context.Provider>;
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 };
 
 const generateNode = (self, id) => ({
@@ -36,32 +40,33 @@ const generateNode = (self, id) => ({
   children: [],
 });
 
-const appendChild = (nodes, fatherId, childId) => {
+const appendChild = (nodes, child, fatherId) => {
   const father = findNodeById(fatherId);
 
   if (!father) {
-    Logger.warn(`[Tree|appendChild] Could not find father by id ${fatherId}`);
+    Logger.warn(`[appendChild] Could not find father by id ${fatherId}`);
     return;
   }
 
-  father.children = [...father.children, childId];
+  father.children = [...father.children, child.id];
 
-  const rest = excludeNodeById(fatherId);
+  const rest = excludeNodeById(nodes, fatherId);
 
   return [...rest, father];
 };
 
+const NOTHING = [];
 const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
   // Select node
   let nodeId = selectedNodeId;
 
   // No where to go...
-  const noWhereToGo = nodeId === undefined && siblings === [];
+  const noWhereToGo = nodeId === undefined && siblings.length === 0;
   if (noWhereToGo) {
-    Logger.debug("Puff...");
+    Logger.debug("[refreshDownEdges] Reached last branch leaf...");
 
     // With Array.flat() this will go away...
-    return [];
+    return NOTHING;
   }
 
   // Node id exists
@@ -71,10 +76,14 @@ const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
 
     const loadedChildren = loadChildren(node.children);
 
-    // Builds father <=> children edges
+    // Builds father => children edges
     const childrenEdges = loadedChildren
-      .map((child) => calculateEdgePosition(node.self, child.self))
+      .map((child) => generateEdge(node.self, child.self))
       .flat();
+
+    Logger.info(
+      `[refreshDownEdges] Calculated ${childrenEdges.length()} children edges`
+    );
 
     // Returns it with the rest
     return childrenEdges;
@@ -82,56 +91,41 @@ const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
 
   const hasSiblings = siblings.length > 0;
   if (!hasSiblings) {
-    Logger.warn("");
+    Logger.warn("[refreshDownEdges] You should'nt see me!");
+    return NOTHING;
   }
 
   return [
     ...result,
-    Array.siblings
+    ...Array.siblings
       .map((sibling) => refreshDownEdges(nodes, [], sibling))
       .flat(),
   ];
-
-  // const startingNodeId = siblings === [];
-
-  // const startingNode = findNodeById(nodes, startingNodeId);
-
-  // if (!startingNode) {
-  //   Logger.warn(
-  //     `[Tree|refreshDownEdges] Could not find starting node by id ${startingNodeId}`
-  //   );
-  //   return;
-  // }
-
-  // if (startingNode.children === []) {
-  //   Logger.info(`Ended leaf id ${startingNodeId}`);
-  //   return false;
-  // }
-
-  // const loadedChildren = loadChildren(startingNode.children);
-
-  // const childrenEdges = loadedChildren
-  //   .map((child) => calculateEdgePosition(startingNode.self, child.self))
-  //   .flat();
-
-  // return [...childrenEdges, refreshDownEdges(nodes, loadedChildren)];
 };
 
-const generateEdge = (childId, fatherId) => {
+const generateEdge = (fatherRef, childRef) => {
+  const { fromX, toX, fromY, toY } = calculateEdgePosition(fatherRef, childRef);
+
   return {
+    fromX,
+    toX,
+    fromY,
+    toY,
     id: nanoid(),
-    fatherId,
-    childId,
-    fromX: 0,
-    toX: 100,
-    fromY: 0,
-    toY: 100,
   };
 };
 
 const calculateEdgePosition = (fatherRef, childRef) => {
+  const fatherX = 0;
+  const fatherY = 0;
+  const childX = 0;
+  const childY = 0;
+
   return {
-    id: nanoid(),
+    fromX: Math.min(fatherX, childX),
+    toX: Math.max(fatherX, childX),
+    fromY: Math.min(fatherY, childY),
+    toY: Math.min(fatherY, childY),
   };
 };
 
