@@ -2,18 +2,33 @@ import { nanoid } from "nanoid";
 
 import Logger from "../Logger";
 
-const generateNode = (self, id) => ({
+const generateNode = (self, id, father) => ({
   self,
   id,
+  father,
   children: [],
 });
 
+const syncChildren = (nodes) =>
+  nodes.map((node) => {
+    const father = findNodeById(node.fatherId);
+
+    if (!father) {
+      Logger.warn(`[syncChildren] Could not find father by id ${node.fatherId}`);
+      return node;
+    }
+
+    father.children = [...father.children, node.id];
+    return father;
+  });
+
 const appendChild = (nodes, child, fatherId) => {
-  const father = findNodeById(fatherId);
+  Logger.info(`Appending child ${child.id}`);
+  const father = findNodeById(nodes, fatherId);
 
   if (!father) {
     Logger.warn(`[appendChild] Could not find father by id ${fatherId}`);
-    return;
+    return [...nodes, child];
   }
 
   father.children = [...father.children, child.id];
@@ -31,7 +46,7 @@ const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
   // No where to go...
   const noWhereToGo = nodeId === undefined && siblings.length === 0;
   if (noWhereToGo) {
-    Logger.debug("[refreshDownEdges] Reached last branch leaf...");
+    Logger.info("[refreshDownEdges] Reached last branch leaf...");
 
     // With Array.flat() this will go away...
     return NOTHING;
@@ -40,7 +55,7 @@ const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
   // Node id exists
   const hasNode = nodeId !== undefined;
   if (hasNode) {
-    const node = findNodeById(nodeId);
+    const node = findNodeById(nodes, nodeId);
 
     const loadedChildren = loadChildren(node.children);
 
@@ -107,6 +122,7 @@ const excludeNodeById = (nodes, id) => nodes.filter((n) => n.id !== id);
 
 const Actions = {
   generateNode,
+  syncChildren,
   appendChild,
   refreshDownEdges,
   excludeNodeById,

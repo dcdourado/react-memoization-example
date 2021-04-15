@@ -1,10 +1,10 @@
 const Logger = {
-  info: (message) => {
-    console.info(`[${time()}] ${message}`);
+  log: (message) => {
+    console.log(`[${time()}] `, message);
   },
 
-  debug: (message) => {
-    console.debug(`[${time()}] ${message}`);
+  info: (message) => {
+    console.info(`[${time()}] ${message}`);
   },
 
   warn: (message) => {
@@ -14,6 +14,8 @@ const Logger = {
   error: (message) => {
     console.error(`[${time()}] ${message}`);
   },
+
+  clear: () => console.clear(),
 };
 
 const time = () => new Date().toLocaleTimeString();
