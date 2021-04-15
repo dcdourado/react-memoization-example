@@ -5,14 +5,14 @@ import Styles from "./style.module.css";
 const Node = (props) => {
   const { name, fatherId, children } = props;
 
-  const self = useRef();
+  const self = useRef(null);
   const [selfId, _UNSAFE_setSelfId] = useState(nanoid());
   const [hasMounted, setMounted] = useState(false);
 
   // const Tree = useContext();
   const Tree = {
     pushNode: () => {},
-    clearNodeLine: (a, b) => {},
+    clearNodeEdge: (a, b) => {},
     drawLineBetweenNodes: (a, b) => {},
   };
 
@@ -24,7 +24,7 @@ const Node = (props) => {
     }
 
     Tree.pushNode({ self, selfId, fatherId });
-    Tree.clearNodeLine({ selfId, fatherId });
+    Tree.clearNodeEdge({ selfId, fatherId });
     Tree.drawLineBetweenNodes({ selfId, fatherId });
     setMounted(true);
   }, [hasMounted, Tree, selfId, fatherId]);
