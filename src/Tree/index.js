@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import Logger from "../Logger";
 import Actions from "./actions";
 
 const Context = React.createContext();
 
-const Tree = (props) => {
+export const Tree = (props) => {
   const { children } = props;
 
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
+
+  Logger.info(`Node count: ${nodes.length}`)
+  Logger.info(`Edge count: ${edges.length}`)
 
   const pushNode = ({ self, selfId, fatherId }) => {
     const node = Actions.generateNode(self, selfId);
@@ -33,3 +36,4 @@ const Tree = (props) => {
 };
 
 
+export const useTree = () => useContext(Tree);
