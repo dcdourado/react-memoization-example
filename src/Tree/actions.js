@@ -14,7 +14,9 @@ const syncChildren = (nodes) =>
     const father = findNodeById(node.fatherId);
 
     if (!father) {
-      Logger.warn(`[syncChildren] Could not find father by id ${node.fatherId}`);
+      Logger.warn(
+        `[syncChildren] Could not find father by id ${node.fatherId}`
+      );
       return node;
     }
 
@@ -57,7 +59,7 @@ const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
   if (hasNode) {
     const node = findNodeById(nodes, nodeId);
 
-    const loadedChildren = loadChildren(node.children);
+    const loadedChildren = loadChildren(nodes, node?.children);
 
     // Builds father => children edges
     const childrenEdges = loadedChildren
@@ -116,7 +118,7 @@ const calculateEdgePosition = (fatherRef, childRef) => {
 const findNodeById = (nodes, id) => nodes?.find((n) => n.id === id);
 
 const loadChildren = (nodes, childrenIds) =>
-  childrenIds.map((id) => findNodeById(nodes, id));
+  childrenIds ? childrenIds.map((id) => findNodeById(nodes, id)) : [];
 
 const excludeNodeById = (nodes, id) => nodes.filter((n) => n.id !== id);
 

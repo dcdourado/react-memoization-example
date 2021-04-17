@@ -17,30 +17,33 @@ const Node = (props) => {
 
   // @doc "Waits component screen loading"
   useLayoutEffect(() => {
-    if (!Tree || !self || !selfId) {
-      // Not completely initialized
-
+    const initialized = Tree && self && selfId;
+    if (!initialized) {
       return;
     }
 
-    if (!hasMounted) {
-      Logger.info(`Mounting ${name} node`);
-
-      Tree.pushNode({ self, selfId, fatherId });
-      setMounted(true);
+    if (hasMounted) {
+      return;
     }
+
+    Logger.info(`Mounting ${name} node`);
+
+    Tree.pushNode({ self, selfId, fatherId });
+    setMounted(true);
 
     // return () => Tree.killNode(selfId);
   }, [hasMounted, Tree, self, selfId, fatherId, name]);
 
-  console.log(typeof children)
+  console.log(typeof children);
 
   return (
     <div ref={self} className={Styles.self}>
       <div className={Styles.leaf}>
         <span>{name}</span>
       </div>
-      <div className={Styles.children}>{children !== undefined && children({ fatherId: selfId })}</div>
+      <div className={Styles.children}>
+        {children !== undefined && children({ fatherId: selfId })}
+      </div>
     </div>
   );
 };

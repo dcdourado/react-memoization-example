@@ -11,7 +11,7 @@ function App() {
         {(props) => (
           <>
             <Node name="Diogo" {...props} />
-            <Node name="Pati" {...props}/>
+            <Node name="Pati" {...props} />
           </>
         )}
       </Node>
