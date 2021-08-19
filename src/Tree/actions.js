@@ -44,17 +44,15 @@ const calculateEdgePosition = (fatherRef, childRef) => {
   };
 };
 
-const findNodeById = (nodes, id) => nodes?.find((n) => n.id === id);
+const findNode = (nodes, id) => nodes.find((n) => n.id === id);
 
-const loadChildren = (nodes, childrenIds) =>
-  childrenIds ? childrenIds.map((id) => findNodeById(nodes, id)) : [];
-
-const excludeNodeById = (nodes, id) => nodes.filter((n) => n.id !== id);
+const excludeNode = (nodes, id) => nodes.filter((n) => n.id !== id);
 
 const Actions = {
   generateNode,
   generateEdge,
-  excludeNodeById,
+  findNode,
+  excludeNode,
 };
 
 export default Actions;

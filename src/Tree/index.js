@@ -9,26 +9,54 @@ export const TreeProvider = (props) => {
   const { children } = props;
 
   const [nodes, setNodes] = useState([]);
-  // const [edges, setEdges] = useState([]);
+  const [edges, setEdges] = useState([]);
 
   useEffect(() => {
     Logger.info("Node report")
     Logger.log(nodes)
   }, [nodes])
 
+  useEffect(() => {
+    Logger.info("Edge report")
+    Logger.log(edges)
+  }, [edges])
+
   const pushNode = ({ self, selfId, fatherId }) => {
     Logger.info(`Pushing node ${selfId}`);
 
     const node = Actions.generateNode(self, selfId, fatherId);
     setNodes((nodes) => [node, ...nodes]);
-    
+
     return;
   };
+
+  const refreshEdges = () => {
+    Logger.info("Refreshing edges")
+
+    Logger.log(nodes)
+
+    const result = nodes
+      .map((n) => {
+        const father = Actions.findNode(nodes, n.fatherId);
+
+        if (!father) {
+          return undefined;
+        }
+
+        return Actions.generateEdge(father.self, n.self);
+      })
+      .filter((e) => e !== undefined);
+    Logger.log(result);
+
+    setEdges(result);
+
+    return;
+  }
 
   const killNode = (nodeId) => {
     Logger.info(`Killed node ${nodeId}`);
 
-    const childlessNodes = Actions.excludeNodeById(nodes, nodeId);
+    const childlessNodes = Actions.excludeNode(nodes, nodeId);
     // TO-DO: kill all children recursevly
     setNodes(childlessNodes);
 
@@ -38,6 +66,8 @@ export const TreeProvider = (props) => {
   const value = {
     nodes,
     pushNode,
+    edges,
+    refreshEdges,
     killNode,
   };
 
