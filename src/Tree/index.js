@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import LineTo from "react-lineto";
 
 import Logger from "../Logger";
 import Actions from "./actions";
@@ -21,10 +22,10 @@ export const TreeProvider = (props) => {
     Logger.log(edges)
   }, [edges])
 
-  const pushNode = ({ self, selfId, fatherId }) => {
-    Logger.info(`Pushing node ${selfId}`);
+  const pushNode = ({ id, fatherId }) => {
+    Logger.info(`Pushing node ${id}`);
 
-    const node = Actions.generateNode(self, selfId, fatherId);
+    const node = Actions.buildNode(id, fatherId);
     setNodes((nodes) => [node, ...nodes]);
 
     return;
@@ -41,7 +42,7 @@ export const TreeProvider = (props) => {
           return undefined;
         }
 
-        return Actions.generateEdge(father.self, n.self);
+        return <LineTo from={n.id} to={father.id} key={`from-${n.id}-to-${father.id}`} />;
       })
       .filter((e) => e !== undefined));
 

@@ -24,6 +24,8 @@ function App() {
           </>
         )}
       </Node>
+
+      {Tree.edges}
     </div>
   );
 }

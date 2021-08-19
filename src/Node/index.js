@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { nanoid } from "nanoid";
 
 import { useTree } from "../Tree";
@@ -9,16 +9,15 @@ import Logger from "../Logger";
 const Node = (props) => {
   const { name, fatherId, children } = props;
 
-  const self = useRef(null);
   // eslint-disable-next-line
-  const [selfId, _UNSAFE_setSelfId] = useState(nanoid());
+  const [id, _UNSAFE_setId] = useState(nanoid());
   const [hasMounted, setMounted] = useState(false);
 
   const Tree = useTree();
 
   // @doc "Waits component screen loading"
   useLayoutEffect(() => {
-    const initialized = Tree && self && selfId;
+    const initialized = Tree && id;
     if (!initialized) {
       return;
     }
@@ -29,19 +28,19 @@ const Node = (props) => {
 
     Logger.info(`Mounting ${name} node`);
 
-    Tree.pushNode({ self, selfId, fatherId });
+    Tree.pushNode({ id, fatherId });
     setMounted(true);
 
-    // return () => Tree.killNode(selfId);
-  }, [hasMounted, Tree, self, selfId, fatherId, name]);
+    // return () => Tree.killNode(id);
+  }, [hasMounted, Tree, id, fatherId, name]);
 
   return (
-    <div ref={self} className={Styles.self}>
-      <div className={Styles.leaf}>
+    <div className={Styles.self}>
+      <div className={`${Styles.leaf} ${id}`}>
         <span>{name}</span>
       </div>
       <div className={Styles.children}>
-        {children !== undefined && children({ fatherId: selfId })}
+        {children !== undefined && children({ fatherId: id })}
       </div>
     </div>
   );
