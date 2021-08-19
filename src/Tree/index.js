@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import LineTo from "react-lineto";
 
 import Logger from "../Logger";
 import Actions from "./actions";
@@ -13,14 +12,11 @@ export const TreeProvider = (props) => {
   const [edges, setEdges] = useState([]);
 
   useEffect(() => {
-    Logger.info("Node report")
-    Logger.log(nodes)
-  }, [nodes])
+    Logger.info("Node report");
+    Logger.log(nodes);
 
-  useEffect(() => {
-    Logger.info("Edge report")
-    Logger.log(edges)
-  }, [edges])
+    setEdges(Actions.buildEdges(nodes));
+  }, [nodes, setEdges])
 
   const pushNode = ({ id, fatherId }) => {
     Logger.info(`Pushing node ${id}`);
@@ -29,25 +25,7 @@ export const TreeProvider = (props) => {
     setNodes((nodes) => [node, ...nodes]);
 
     return;
-  };
-
-  const refreshEdges = () => {
-    Logger.info("Refreshing edges")
-
-    setEdges(nodes
-      .map((n) => {
-        const father = Actions.findNode(nodes, n.fatherId);
-
-        if (!father) {
-          return undefined;
-        }
-
-        return <LineTo from={n.id} to={father.id} key={`from-${n.id}-to-${father.id}`} />;
-      })
-      .filter((e) => e !== undefined));
-
-    return;
-  }
+  };  
 
   const killNode = (nodeId) => {
     Logger.info(`Killed node ${nodeId}`);
@@ -63,7 +41,6 @@ export const TreeProvider = (props) => {
     nodes,
     pushNode,
     edges,
-    refreshEdges,
     killNode,
   };
 
