@@ -33,9 +33,7 @@ export const TreeProvider = (props) => {
   const refreshEdges = () => {
     Logger.info("Refreshing edges")
 
-    Logger.log(nodes)
-
-    const result = nodes
+    setEdges(nodes
       .map((n) => {
         const father = Actions.findNode(nodes, n.fatherId);
 
@@ -45,10 +43,7 @@ export const TreeProvider = (props) => {
 
         return Actions.generateEdge(father.self, n.self);
       })
-      .filter((e) => e !== undefined);
-    Logger.log(result);
-
-    setEdges(result);
+      .filter((e) => e !== undefined));
 
     return;
   }

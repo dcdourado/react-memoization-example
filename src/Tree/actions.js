@@ -15,32 +15,29 @@ const generateEdge = (fatherRef, childRef) => {
   };
 };
 
-// TO-DO: calculate this values correctly
 const calculateEdgePosition = (fatherRef, childRef) => {
   if (!fatherRef.current || !childRef.current) {
     Logger.error("A node reference isn't loaded")
 
     return {
-      fromX: 0,
-      fromY: 0,
-      toX: 0,
-      toY: 0,
+      top: 0,
+      left: 0,
     }
   }
 
-  // Trying to discover something with this
-  Logger.log(fatherRef.current.getBoundingClientRect())
+  const fatherRect = fatherRef.current.getBoundingClientRect()
+  const childRect = childRef.current.getBoundingClientRect()
 
-  const fatherX = 0;
-  const fatherY = 0;
-  const childX = 0;
-  const childY = 0;
+  const fatherTop = fatherRect.top + fatherRect.height / 2
+  const childTop = childRect.top + childRect.height / 2
+  const fatherLeft = fatherRect.left + fatherRect.width / 2
+  const childLeft = childRect.left + childRect.width / 2
 
   return {
-    fromX: Math.min(fatherX, childX),
-    fromY: Math.min(fatherY, childY),
-    toX: Math.max(fatherX, childX),
-    toY: Math.max(fatherY, childY),
+    fromTop: Math.min(fatherTop, childTop),
+    toTop: Math.max(fatherTop, childTop),
+    fromLeft: Math.min(fatherLeft, childLeft),
+    toLeft: Math.max(fatherLeft, childLeft),
   };
 };
 
