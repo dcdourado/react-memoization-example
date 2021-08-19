@@ -10,6 +10,7 @@ const Node = (props) => {
   const { name, fatherId, children } = props;
 
   const self = useRef(null);
+  // eslint-disable-next-line
   const [selfId, _UNSAFE_setSelfId] = useState(nanoid());
   const [hasMounted, setMounted] = useState(false);
 
@@ -33,8 +34,6 @@ const Node = (props) => {
 
     // return () => Tree.killNode(selfId);
   }, [hasMounted, Tree, self, selfId, fatherId, name]);
-
-  console.log(typeof children);
 
   return (
     <div ref={self} className={Styles.self}>

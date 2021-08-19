@@ -2,43 +2,11 @@ import { nanoid } from "nanoid";
 
 import Logger from "../Logger";
 
-const generateNode = (self, id, father) => ({
+const generateNode = (self, id, fatherId) => ({
   self,
   id,
-  father,
-  children: [],
+  fatherId,
 });
-
-const syncChildren = (nodes) =>
-  nodes.map((node) => {
-    const father = findNodeById(node.fatherId);
-
-    if (!father) {
-      Logger.warn(
-        `[syncChildren] Could not find father by id ${node.fatherId}`
-      );
-      return node;
-    }
-
-    father.children = [...father.children, node.id];
-    return father;
-  });
-
-const appendChild = (nodes, child, fatherId) => {
-  Logger.info(`Appending child ${child.id}`);
-  const father = findNodeById(nodes, fatherId);
-
-  if (!father) {
-    Logger.warn(`[appendChild] Could not find father by id ${fatherId}`);
-    return [...nodes, child];
-  }
-
-  father.children = [...father.children, child.id];
-
-  const rest = excludeNodeById(nodes, fatherId);
-
-  return [...rest, father];
-};
 
 const NOTHING = [];
 const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
@@ -67,7 +35,7 @@ const refreshDownEdges = (nodes, siblings, selectedNodeId, result = []) => {
       .flat();
 
     Logger.info(
-      `[refreshDownEdges] Calculated ${childrenEdges.length()} children edges`
+      `[refreshDownEdges] Calculated ${childrenEdges.length} children edges`
     );
 
     // Returns it with the rest
@@ -124,8 +92,6 @@ const excludeNodeById = (nodes, id) => nodes.filter((n) => n.id !== id);
 
 const Actions = {
   generateNode,
-  syncChildren,
-  appendChild,
   refreshDownEdges,
   excludeNodeById,
 };
